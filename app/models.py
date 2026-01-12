@@ -7,7 +7,7 @@ class Base(DeclarativeBase):
 
 
 class Dealer(Base):
-    __tablename__ = 'dealers'
+    __tablename__ = "dealers"
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
@@ -20,7 +20,7 @@ class Dealer(Base):
 
 
 class Car(Base):
-    __tablename__ = 'cars'
+    __tablename__ = "cars"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     firm = Column(String, nullable=False)
