@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/api/cars", tags=["Cars"])
 
-@router.get("/", response_model=list[CarResponse]) # TODO: тут вроде list должен быть
+@router.get("/", response_model=list[CarResponse])
 def get_cars(db: Session = Depends(get_db)):
     return db.query(Car).all()
 
