@@ -2,9 +2,17 @@ from app.db import get_db
 from app.models import Car, Dealer
 from app.schemas import CarCreate, CarUpdate, CarResponse
 
+from app.rabbitmq.producers import CarProducer
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
+
+
+def send_car_event(type: str, data: str):
+    producer = CarProducer()
+    producer.send_event(type, data)
+    producer.close()
 
 
 router = APIRouter(prefix="/api/cars", tags=["Cars"])
@@ -32,6 +40,9 @@ def create_car(car: CarCreate, db: Session = Depends(get_db)):
     db.add(db_car)
     db.commit()
     db.refresh(db_car)
+
+    send_car_event("CREATE", create_data)
+
     return db_car
 
 @router.put("/{id}", response_model=CarResponse)
@@ -52,6 +63,9 @@ def update_car(id: int, car: CarUpdate, db: Session = Depends(get_db)):
 
     db.commit()
     db.refresh(db_car)
+
+    send_car_event("UPDATE", update_data)
+
     return db_car
 
 @router.delete("/{id}")
@@ -62,4 +76,8 @@ def delete_car(id: int, db: Session = Depends(get_db)):
     
     db.delete(db_car)
     db.commit()
+
+    car_data = CarResponse.model_validate(db_car).model_dump(exclude={"id"})
+    send_car_event("DELETE", car_data)
+
     return {"detail": "Автомобиль удален"}
