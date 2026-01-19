@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api/dealers", tags=["Dealers"])
 
 @router.get("/", response_model=list[DealerResponse])
 def get_dealers(db: Session = Depends(get_db)):
-    return db.query(Dealer).all()
+    return db.query(Dealer).order_by(Dealer.id).all()
 
 @router.get("/{id}", response_model=DealerResponse)
 def get_dealer(id: int, db: Session = Depends(get_db)):

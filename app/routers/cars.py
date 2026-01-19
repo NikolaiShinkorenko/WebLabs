@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/cars", tags=["Cars"])
 
 @router.get("/", response_model=list[CarResponse])
 def get_cars(db: Session = Depends(get_db)):
-    return db.query(Car).all()
+    return db.query(Car).order_by(Car.id).all()
 
 @router.get("/{id}", response_model=CarResponse)
 def get_car(id: int, db: Session = Depends(get_db)):
